@@ -1,0 +1,282 @@
+From bd9f79e0e44547c2247f5fe05def0366370f200d Mon Sep 17 00:00:00 2001
+From: Alex Gonzalez <alex.gonzalez@digi.com>
+Date: Tue, 11 Jul 2017 13:20:36 +0200
+Subject: [PATCH] dts: Copy imx6ul-ccimx6ulstarter-id129.dts into
+ imx6ul-custom-wb.dts
+
+Also, add a non-wireless imx6ul-custom.dts as spaceholder.
+
+Signed-off-by: Alex Gonzalez <alex.gonzalez@digi.com>
+---
+ arch/arm/boot/dts/Makefile             |   4 +-
+ arch/arm/boot/dts/imx6ul-custom-wb.dts | 119 +++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/imx6ul-custom.dts    | 119 +++++++++++++++++++++++++++++++++
+ 3 files changed, 241 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/imx6ul-custom-wb.dts
+ create mode 100644 arch/arm/boot/dts/imx6ul-custom.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index d1ea43a538d4..4da23e5f29a6 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -396,7 +396,9 @@ dtb-$(CONFIG_SOC_IMX6UL) += \
+ 	imx6ul-ccimx6ulstarter.dtb \
+ 	imx6ul-ccimx6ulstarter-id129.dtb \
+ 	imx6ul-ccimx6ulstarter-wb.dtb \
+-	imx6ul-ccimx6ulstarter-wb-mfg.dtb
++	imx6ul-ccimx6ulstarter-wb-mfg.dtb \
++	imx6ul-custom.dtb \
++	imx6ul-custom-wb.dtb \
+ dtb-$(CONFIG_SOC_IMX6ULL) += \
+ 	imx6ull-14x14-ddr3-arm2.dtb \
+ 	imx6ull-14x14-ddr3-arm2-adc.dtb \
+diff --git a/arch/arm/boot/dts/imx6ul-custom-wb.dts b/arch/arm/boot/dts/imx6ul-custom-wb.dts
+new file mode 100644
+index 000000000000..019a1b711d57
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6ul-custom-wb.dts
+@@ -0,0 +1,119 @@
++/*
++ * Copyright 2016, 2017 Digi International, Inc.
++ *
++ * The code contained herein is licensed under the GNU General Public
++ * License. You may obtain a copy of the GNU General Public License
++ * Version 2 or later at the following locations:
++ *
++ * http://www.opensource.org/licenses/gpl-license.html
++ * http://www.gnu.org/copyleft/gpl.html
++ */
++
++/dts-v1/;
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++/* i.MX6 UltraLite CPU */
++#include "imx6ul.dtsi"
++/* ConnectCore 6UL (wireless/bluetooth variant) */
++#include "imx6ul-ccimx6ul-wb.dtsi"
++/* ConnectCore 6UL StarterBoard */
++#include "imx6ul-ccimx6ulstarter.dtsi"
++
++/*
++ * Uncomment to enable the i.MX6UL SoC ADCs.
++ * Include in adc-ch-list the ADC channels (from 0 to 9) that you want to
++ * enable. Note that the iomux has to be configured accordingly in pinctrl_adc1
++ * to configure the pad for ADC operation
++ */
++//&adc1 {
++//	pinctrl-names = "default";
++//	pinctrl-0 = <&pinctrl_adc1>;
++//	adc-ch-list = <4>;
++//	status = "okay";
++//};
++
++&caam_keyblob {
++	status = "okay";
++};
++
++/* ECSPI3 (Raspberry PI Expansion header) */
++&ecspi3 {
++	/*
++	 * There are no SPI slave devices on the SBC.
++	 * Enable if adding your slave devices below.
++	 */
++	//status = "okay";
++
++	/* Add your slave devices here. Next is an example of spidev. */
++	//spidev@0 {
++	//	reg = <0>;
++	//	compatible = "spidev";
++	//	spi-max-frequency = <1000000>;
++	//};
++};
++
++&fec1 {
++	status = "okay";
++};
++
++/* CAN1 (Raspberry PI Expansion header) */
++&flexcan1 {
++	status = "okay";
++};
++
++/* I2C2 (Raspberry PI Expansion header and Grove connector) */
++&i2c2 {
++	status = "okay";
++};
++
++/* MCA IO0 connected to Grove ADC connector */
++&mca_adc {
++	digi,adc-ch-list = <0>;
++	digi,adc-vref = <3000000>;
++};
++
++/* Uncomment to Enable Tamper detection. Two interfaces (0 and 1) are available */
++//&mca_tamper {
++//	digi,tamper-if-list = <0 1>;
++//};
++
++/* PWM1 (Raspberry PI Expansion header) */
++&pwm1 {
++	status = "okay";
++};
++
++/* UART4 (Raspberry PI Expansion header) */
++&uart4 {
++	status = "okay";
++};
++
++/* UART5 (Console) */
++&uart5 {
++	status = "okay";
++};
++
++&usbotg1 {
++	status = "okay";
++};
++
++&usbotg2 {
++	status = "okay";
++};
++
++/* USDHC2 (microSD) */
++&usdhc2 {
++	status = "okay";
++};
++
++/* Pin mux configuration */
++&iomuxc {
++	imx6ul-ccimx6ul {
++		/* Uncomment specific pins of the ADC channels enabled in 'adc-ch-list' */
++		//pinctrl_adc1: adc1grp {
++		//	fsl,pins = <
++		//		/* GPIO1_4/ADC1_IN4 (pin 7 of the expansion header) */
++		//		MX6UL_PAD_GPIO1_IO04__GPIO1_IO04        0xb0
++		//	>;
++		//};
++	};
++};
+diff --git a/arch/arm/boot/dts/imx6ul-custom.dts b/arch/arm/boot/dts/imx6ul-custom.dts
+new file mode 100644
+index 000000000000..b1c6e30c912e
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6ul-custom.dts
+@@ -0,0 +1,119 @@
++/*
++ * Copyright 2016, 2017 Digi International, Inc.
++ *
++ * The code contained herein is licensed under the GNU General Public
++ * License. You may obtain a copy of the GNU General Public License
++ * Version 2 or later at the following locations:
++ *
++ * http://www.opensource.org/licenses/gpl-license.html
++ * http://www.gnu.org/copyleft/gpl.html
++ */
++
++/dts-v1/;
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++/* i.MX6 UltraLite CPU */
++#include "imx6ul.dtsi"
++/* ConnectCore 6UL (common) */
++#include "imx6ul-ccimx6ul.dtsi"
++/* ConnectCore 6UL StarterBoard */
++#include "imx6ul-ccimx6ulstarter.dtsi"
++
++/*
++ * Uncomment to enable the i.MX6UL SoC ADCs.
++ * Include in adc-ch-list the ADC channels (from 0 to 9) that you want to
++ * enable. Note that the iomux has to be configured accordingly in pinctrl_adc1
++ * to configure the pad for ADC operation
++ */
++//&adc1 {
++//	pinctrl-names = "default";
++//	pinctrl-0 = <&pinctrl_adc1>;
++//	adc-ch-list = <4>;
++//	status = "okay";
++//};
++
++&caam_keyblob {
++	status = "okay";
++};
++
++/* ECSPI3 (Raspberry PI Expansion header) */
++&ecspi3 {
++	/*
++	 * There are no SPI slave devices on the SBC.
++	 * Enable if adding your slave devices below.
++	 */
++	//status = "okay";
++
++	/* Add your slave devices here. Next is an example of spidev. */
++	//spidev@0 {
++	//	reg = <0>;
++	//	compatible = "spidev";
++	//	spi-max-frequency = <1000000>;
++	//};
++};
++
++&fec1 {
++	status = "okay";
++};
++
++/* CAN1 (Raspberry PI Expansion header) */
++&flexcan1 {
++	status = "okay";
++};
++
++/* I2C2 (Raspberry PI Expansion header and Grove connector) */
++&i2c2 {
++	status = "okay";
++};
++
++/* MCA IO0 connected to Grove ADC connector */
++&mca_adc {
++	digi,adc-ch-list = <0>;
++	digi,adc-vref = <3000000>;
++};
++
++/* Uncomment to Enable Tamper detection. Two interfaces (0 and 1) are available */
++//&mca_tamper {
++//	digi,tamper-if-list = <0 1>;
++//};
++
++/* PWM1 (Raspberry PI Expansion header) */
++&pwm1 {
++	status = "okay";
++};
++
++/* UART4 (Raspberry PI Expansion header) */
++&uart4 {
++	status = "okay";
++};
++
++/* UART5 (Console) */
++&uart5 {
++	status = "okay";
++};
++
++&usbotg1 {
++	status = "okay";
++};
++
++&usbotg2 {
++	status = "okay";
++};
++
++/* USDHC2 (microSD) */
++&usdhc2 {
++	status = "okay";
++};
++
++/* Pin mux configuration */
++&iomuxc {
++	imx6ul-ccimx6ul {
++		/* Uncomment specific pins of the ADC channels enabled in 'adc-ch-list' */
++		//pinctrl_adc1: adc1grp {
++		//	fsl,pins = <
++		//		/* GPIO1_4/ADC1_IN4 (pin 7 of the expansion header) */
++		//		MX6UL_PAD_GPIO1_IO04__GPIO1_IO04        0xb0
++		//	>;
++		//};
++	};
++};
