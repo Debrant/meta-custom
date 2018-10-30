@@ -1,0 +1,5 @@
+FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}-${PV}:"
+
+
+
+COMPATIBLE_MACHINE = "(tiger6)"
